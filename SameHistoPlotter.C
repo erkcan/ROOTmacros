@@ -6,29 +6,43 @@
 // .x SameHistoPlotter("mydir/myhist")
 // If it is preferable to put the objects into multiple pads instead of
 // overlaying them in a single canvas, multipad option can be set.
+
 int SameHistoPlotter(TString histoname="", bool multipad=0)
 {
   int noOfPlottedHistos = 0;
-  for (int k=0; k<gROOT->GetListOfFiles()->GetEntries(); k++) {
+  int noOfOpenTFiles = gROOT->GetListOfFiles()->GetEntries();
+  // If no canvases around, create a new one.
+  if ( gROOT->GetListOfCanvases()->GetEntries() == 0 ) TCanvas::MakeDefCanvas();
+  // Note that I use the currently active TPad as my canvas!
+  TPad *mycanv = gPad;
+  // If multipad option is chosen, we divide the canvas into multiple pads.
+  // For simplicity, before we conservatively create one pad for each file that
+  // is currently open. (Some pads might therefore remain empty at the end.)
+  if ( multipad ) mycanv->Divide(noOfOpenTFiles);
+  for (int k=0; k<noOfOpenTFiles; k++) {
     TFile *myfile = (TFile*) gROOT->GetListOfFiles()->At(k);
-    if (histoname!="") { 
-      cout << "Plotting in "
+    if (histoname!="") {
+      if (multipad) mycanv->cd(noOfPlottedHistos+1);
+      cout << noOfPlottedHistos+1 << " - Plotting in "
 	   << gROOT->GetListOfColors()->At(noOfPlottedHistos+1)->GetName()
 	   << ", " << histoname << " from ";
-      if ( myfile->Get(histoname) != 0 ) {
-	TString opt = noOfPlottedHistos==0 ? "" : "same";
+      TObject *myobj = myfile->Get(histoname);
+      if ( myobj != 0 ) {
+	TString opt = (noOfPlottedHistos==0 || multipad) ? "" : "same";
 	// To have different colors without sacrificing the flexibility
 	// of being independent of particular TObject type, we set the
 	// default coloring with gStyle and force it.
 	gStyle->SetHistLineColor(noOfPlottedHistos+1);
 	gStyle->SetFuncColor(noOfPlottedHistos+1);
-	gROOT->ForceStyle();
-	myfile->Get(histoname)->Draw(opt);
-	noOfPlottedHistos ++; }
+	myobj->UseCurrentStyle();
+	myobj->Draw(opt);
+	noOfPlottedHistos ++;
+      }
     }
     // if no histoname is given, just list the currently open files
     else cout << "Currently accessible file ";
     cout << myfile->GetName() << endl;
   }
+  // 
   return noOfPlottedHistos;
 }
