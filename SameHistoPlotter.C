@@ -19,6 +19,7 @@ int SameHistoPlotter(TString histoname="", bool multipad=0)
   // For simplicity, before we conservatively create one pad for each file that
   // is currently open. (Some pads might therefore remain empty at the end.)
   if ( multipad ) mycanv->Divide(noOfOpenTFiles);
+  TLegend *myleg = new TLegend(0.5,0.67,0.88,0.88,histoname.Data());
   for (int k=0; k<noOfOpenTFiles; k++) {
     TFile *myfile = (TFile*) gROOT->GetListOfFiles()->At(k);
     if (histoname!="") {
@@ -36,6 +37,7 @@ int SameHistoPlotter(TString histoname="", bool multipad=0)
 	gStyle->SetFuncColor(noOfPlottedHistos+1);
 	myobj->UseCurrentStyle();
 	myobj->Draw(opt);
+	if (!multipad) myleg->AddEntry(myobj,myfile->GetName(),"lpf");
 	noOfPlottedHistos ++;
       }
     }
@@ -43,6 +45,6 @@ int SameHistoPlotter(TString histoname="", bool multipad=0)
     else cout << "Currently accessible file ";
     cout << myfile->GetName() << endl;
   }
-  // 
+  if (!multipad && noOfPlottedHistos>0) myleg->Draw();
   return noOfPlottedHistos;
 }
