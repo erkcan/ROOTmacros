@@ -24,8 +24,9 @@ int SameHistoPlotter(TString histoname="", bool multipad=0)
     TFile *myfile = (TFile*) gROOT->GetListOfFiles()->At(k);
     if (histoname!="") {
       if (multipad) mycanv->cd(noOfPlottedHistos+1);
-      cout << noOfPlottedHistos+1 << " - Plotting in "
-	   << gROOT->GetListOfColors()->At(noOfPlottedHistos+1)->GetName()
+      cout.width(2); cout.fill('0');
+      cout << noOfPlottedHistos+1 << " - Plotting in "; cout.width(7);
+      cout << gROOT->GetListOfColors()->At(noOfPlottedHistos+1)->GetName()
 	   << ", " << histoname << " from ";
       TObject *myobj = myfile->Get(histoname);
       if ( myobj != 0 ) {
