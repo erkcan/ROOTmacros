@@ -7,7 +7,7 @@
 // If it is preferable to put the objects into multiple pads instead of
 // overlaying them in a single canvas, multipad option can be set.
 
-int SameHistoPlotter(TString histoname="", bool multipad=0)
+int SameHistoPlotter(TString histoname="", bool multipad=0, TString opt="")
 {
   int noOfPlottedHistos = 0;
   int noOfOpenTFiles = gROOT->GetListOfFiles()->GetEntries();
@@ -31,14 +31,14 @@ int SameHistoPlotter(TString histoname="", bool multipad=0)
 	   << ", " << histoname << " from ";
       TObject *myobj = myfile->Get(histoname);
       if ( myobj != 0 ) {
-	TString opt = (noOfPlottedHistos==0 || multipad) ? "" : "same";
+	TString inopt = opt + ((noOfPlottedHistos==0 || multipad) ? "" : "same");
 	// To have different colors without sacrificing the flexibility
 	// of being independent of particular TObject type, we set the
 	// default coloring with gStyle and force it.
 	gStyle->SetHistLineColor(noOfPlottedHistos+1);
 	gStyle->SetFuncColor(noOfPlottedHistos+1);
 	myobj->UseCurrentStyle();
-	myobj->Draw(opt);
+	myobj->Draw(inopt);
 	if (!multipad) myleg->AddEntry(myobj,myfile->GetName(),"lpf");
 	noOfPlottedHistos ++;
       }
