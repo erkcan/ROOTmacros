@@ -9,7 +9,12 @@ int AllHistosBrowser(float delay=1.5, TString opt="")
   for (int k=0; k<noOfBrowsables; k++) {
     TObject *myobj = gROOT->FindObject(gDirectory->GetListOfKeys()->At(k)->GetName());
     if ( myobj != 0 && myobj->InheritsFrom("TH1") ) {
-      myobj->Draw(opt.Data());
+      // if the "same" option is being given, we don't want it to
+      // be used for the first histo, otherwise things get ugly
+      TString inopt = opt;
+      if (noOfPlottedHistos==0) {
+	inopt.ToLower(); if (inopt.Index("same")>-1) inopt.ReplaceAll("same",""); }
+      myobj->Draw(inopt.Data());
       mycanvas->Update();
       cout << myobj->GetName() << endl;
       noOfPlottedHistos++;
