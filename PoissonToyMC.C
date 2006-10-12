@@ -7,12 +7,13 @@
 
 float PoissonToyMC(float mean, float CL=0.95, long trials=1e4)
 {
-  TF1 balik("balik","TMath::Poisson(x,[0])",0,100);
-  balik.SetParameter(0,mean);
   float histrng = TMath::Ceil(mean*2.5);
+  TF1 balik("balik","TMath::Poisson(x,[0])",0,histrng);
+  balik.SetParameter(0,mean);
   TH1F *hal = new TH1F("hal","ToyPoisson",histrng,0,histrng);
   long pass=0;
   for (long k=0; k<trials; ++k) {
+    //int uydur = gRandom->Poisson(mean);
     //int uydur = (int)(TMath::Floor(0.5+(balik.GetRandom())));
     float uydur = balik.GetRandom();
     hal->Fill(uydur);
