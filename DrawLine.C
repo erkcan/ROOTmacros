@@ -1,9 +1,13 @@
 // Draw a line with the equation y = slope * x + offset
-// on an already-drawn TGraph2D or on a TH2*.
+// on an already-drawn TGraph2D or on a histogram. The
+// function returns a TObject*, which inherits from either
+// a TLine* or a TPolyLine3D* depending on the gPad.
+// If you cannot obtain what you desire, please try
+// gPad->Update() before calling DrawLine().
 
-TPolyLine3D* DrawLine(float slope, float offset) {
+TObject* DrawLine(float slope, float offset) {
 
-  TPolyLine3D* ll=0;
+  TObject* ll=0;
   // loop through all the things drawn on the currently
   // active TPad, until you find a TGraph2D or TH2*.
   const TList *padlist = gPad->GetListOfPrimitives();
@@ -11,11 +15,15 @@ TPolyLine3D* DrawLine(float slope, float offset) {
     TObject *myobj = padlist->At(pp);
     if ( myobj != 0 && myobj->InheritsFrom("TGraph2D") )
       myobj = ((TGraph2D*)myobj)->GetHistogram();
-    if ( myobj != 0 && myobj->InheritsFrom("TH2") ) {
+    if ( myobj != 0 && myobj->InheritsFrom("TH1") ) {
       float xmin=((TH1*)myobj)->GetXaxis()->GetXmin();
       float xmax=((TH1*)myobj)->GetXaxis()->GetXmax();
       float ymin=((TH1*)myobj)->GetYaxis()->GetXmin();
       float ymax=((TH1*)myobj)->GetYaxis()->GetXmax();
+      // For TH1 type histos, GetYaxis()->GetX???() methods
+      // do not work properly. So use gPad->GetUy???().
+      if ( ! myobj->InheritsFrom("TH2") ) {
+	ymin=gPad->GetUymin(); ymax=gPad->GetUymax(); }
       if ( xmin*slope+offset > ymax || xmin*slope+offset < ymin )
 	xmin = ((slope>0?ymin:ymax)-offset)/slope;
       if ( xmax*slope+offset > ymax || xmax*slope+offset < ymin )
@@ -23,7 +31,8 @@ TPolyLine3D* DrawLine(float slope, float offset) {
       Float_t x[2]={xmin,xmax};
       Float_t y[2]={xmin*slope+offset,slope*xmax+offset};
       Float_t z[2]={0,0};
-      ll = new TPolyLine3D(2,x,y,z);
+      if ( myobj->InheritsFrom("TH2") ) ll = new TPolyLine3D(2,x,y,z);
+      else ll = new TLine(x[0],y[0],x[1],y[1]);
       ll->Draw();
       break;
     }
