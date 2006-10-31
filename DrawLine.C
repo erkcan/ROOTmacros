@@ -3,7 +3,7 @@
 
 TPolyLine3D* DrawLine(float slope, float offset) {
 
-  TPolyLine 3D* ll=0;
+  TPolyLine3D* ll=0;
   // loop through all the things drawn on the currently
   // active TPad, until you find a TGraph2D or TH2*.
   const TList *padlist = gPad->GetListOfPrimitives();
