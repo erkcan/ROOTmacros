@@ -24,12 +24,13 @@ TObject* DrawLine(float slope, float offset) {
       // do not work properly. So use gPad->GetUy???().
       if ( ! myobj->InheritsFrom("TH2") ) {
 	ymin=gPad->GetUymin(); ymax=gPad->GetUymax(); }
-      if ( xmin*slope+offset > ymax || xmin*slope+offset < ymin )
-	xmin = ((slope>0?ymin:ymax)-offset)/slope;
-      if ( xmax*slope+offset > ymax || xmax*slope+offset < ymin )
-	xmax = ((slope<0?ymin:ymax)-offset)/slope;
       Float_t x[2]={xmin,xmax};
-      Float_t y[2]={xmin*slope+offset,slope*xmax+offset};
+      if ( xmin*slope+offset > ymax || xmin*slope+offset < ymin )
+	x[0] = ((slope>0?ymin:ymax)-offset)/slope;
+      if ( xmax*slope+offset > ymax || xmax*slope+offset < ymin )
+	x[1] = ((slope<0?ymin:ymax)-offset)/slope;
+      if ( x[0]<xmin || x[1]>xmax ) break;
+      Float_t y[2]={x[0]*slope+offset,slope*x[1]+offset};
       Float_t z[2]={0,0};
       if ( myobj->InheritsFrom("TH2") ) ll = new TPolyLine3D(2,x,y,z);
       else ll = new TLine(x[0],y[0],x[1],y[1]);
