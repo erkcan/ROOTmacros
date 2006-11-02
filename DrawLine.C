@@ -2,10 +2,15 @@
 // on an already-drawn TGraph2D or on a histogram. The
 // function returns a TObject*, which inherits from either
 // a TLine* or a TPolyLine3D* depending on the gPad.
-// If you cannot obtain what you desire, please try
+// If you cannot obtain what you desire (for instance if you
+// get too short lines, or weird line labels), please try
 // gPad->Update() before calling DrawLine().
 
-TObject* DrawLine(float slope, float offset) {
+// Known issues: There are no 3d text objects in ROOT. Because
+// of this, line label is located correctly only for TH1 plots
+// and contour plots of TGraph2D.
+
+TObject* DrawLine(float slope, float offset, TString label="") {
 
   TObject* ll=0;
   // loop through all the things drawn on the currently
@@ -35,6 +40,22 @@ TObject* DrawLine(float slope, float offset) {
       if ( myobj->InheritsFrom("TH2") ) ll = new TPolyLine3D(2,x,y,z);
       else ll = new TLine(x[0],y[0],x[1],y[1]);
       ll->Draw();
+      // Print a "label" in the middle of the line
+      if ( label != "" ) {
+	TLatex *tex = new TLatex();
+	tex->SetTextSize(0.03);
+	// need the following, since slope!=plot slope
+	double ta = (gPad->YtoPixel(y[1])-gPad->YtoPixel(y[0])) *-1.
+	  / (gPad->XtoPixel(x[1])-gPad->XtoPixel(x[0]));
+	tex->SetTextAngle(TMath::ATan(ta)*180*TMath::InvPi());
+	// for a contour plot, need world coor. -> user coor.
+	TView* view=gPad->GetView();
+	if ( view ) {
+	  Float_t  wc[3]={ (x[0]+x[1])/2, (y[0]+y[1])/2, 1 };
+	  Float_t ndc[3]={ 0,0,0 };
+	  view->WCtoNDC(wc,ndc);
+	  tex->DrawText( ndc[0], ndc[1], label ); }
+	else tex->DrawText( (x[0]+x[1])/2, (y[0]+y[1])/2, label ); }
       break;
     }
   }
