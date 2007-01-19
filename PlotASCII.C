@@ -8,9 +8,9 @@ int PlotASCII(TString filename) { return PlotASCII(filename,0,0); }
 // Any value read outside [xmin,xmax] range will become under/overflow.
 int PlotASCII(TString filename, float xmin, float xmax)
 {
-  TTree *mytree = new TTree(filename,filename+" ROOT tree");
+  TTree *mytree = new TTree(filename+"_tree",filename+" ROOT tree");
   float x;
-  mytree->Branch(filename,&x,filename);
+  mytree->Branch("input",&x,filename);
 
   ifstream asciiFile(filename);
   int sayac = 0;
@@ -24,7 +24,7 @@ int PlotASCII(TString filename, float xmin, float xmax)
   TH1F *myhisto;
   if (xmin!=xmax) myhisto = new TH1F(filename+"_histo",filename+"_histo", 100, xmin, xmax);
   else myhisto = new TH1F();
-  mytree->Draw(filename+">>"+filename+"_histo");
+  mytree->Draw("input>>"+filename+"_histo");
 
   return sayac;
 }
