@@ -14,12 +14,15 @@ Double_t CalcError(Double_t x, Double_t dx, Double_t z, Double_t dz, char op)
 
 }
 
-TString BinomialDiv(Double_t dividend, Double_t divisor)
+TString BinomialDiv(Double_t dividend, Double_t divisor, Bool_t percent=0)
 {
   // Returns a TString for the result of a division operation and the
   // associated binomial division error. Handy for efficiency calculations
-  // in physics.
-  TString out=""; out+=(dividend/divisor); out+=" +- ";
-  out+=CalcError(dividend, sqrt(dividend), divisor, sqrt(divisor), 'b');
-  return out; 
+  // in physics. The last parameter, which is false by default, can be
+  // set true when the answer is desired in percent.
+  Double_t perfac=1.; TString persign="";
+  if (percent) { perfac=100.; persign=" %"; }
+  TString out=""; out+=(dividend/divisor*perfac); out+=persign+" +- ";
+  out+=perfac*CalcError(dividend, sqrt(dividend), divisor, sqrt(divisor), 'b');
+  return out+persign;
 }
