@@ -5,7 +5,6 @@ int AllHistosBrowser(float delay=1.5, TString opt="", TString select="")
   int noOfPlottedHistos = 0;
   int noOfBrowsables = gDirectory->GetListOfKeys()->GetEntries();
   TCanvas *mycanvas = new TCanvas("mycanvas");
-  cout << "Please press enter to go to the next plot one after the other.\n";
   for (int k=0; k<noOfBrowsables; k++) {
     TObject *myobj = gROOT->FindObject(gDirectory->GetListOfKeys()->At(k)->GetName());
     if ( myobj != 0 && myobj->InheritsFrom("TH1") ) {
