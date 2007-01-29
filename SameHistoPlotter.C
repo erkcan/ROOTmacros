@@ -7,7 +7,11 @@
 // If it is preferable to put the objects into multiple pads instead of
 // overlaying them in a single canvas, multipad option can be set.
 
-int SameHistoPlotter(TString histoname="", bool multipad=0, TString opt="")
+// One can pass draw options and a single line of ROOT code to be
+// processed for each plotted histogram, as the third and fourth
+// arguments. (See SameHistoNormPlotter as an example.)
+
+int SameHistoPlotter(TString histoname="", bool multipad=0, TString opt="", const char* cmdPerObj=0)
 {
   int noOfPlottedHistos = 0;
   int noOfOpenTFiles = gROOT->GetListOfFiles()->GetEntries();
@@ -37,6 +41,7 @@ int SameHistoPlotter(TString histoname="", bool multipad=0, TString opt="")
 	// default coloring with gStyle and force it.
 	gStyle->SetHistLineColor(noOfPlottedHistos+1);
 	gStyle->SetFuncColor(noOfPlottedHistos+1);
+	if (cmdPerObj) gROOT->ProcessLineFast(cmdPerObj);
 	myobj->UseCurrentStyle();
 	myobj->Draw(inopt);
 	if (!multipad) myleg->AddEntry(myobj,myfile->GetName(),"lpf");
@@ -50,3 +55,11 @@ int SameHistoPlotter(TString histoname="", bool multipad=0, TString opt="")
   if (!multipad && noOfPlottedHistos>0) myleg->Draw();
   return noOfPlottedHistos;
 }
+
+// An application of SameHistoPlotter cmdPerObj argument. For TObjects
+// that inherit from TH1, histograms are all plotted normalized to unit
+// area.
+int SameHistoNormPlotter(TString histoname="",
+			 bool multipad=0, TString opt="") {
+  cout << "Normalizing histograms to unit area.\n";
+  return SameHistoPlotter(histoname, multipad, opt, "((TH1*)myobj)->Scale(1./((TH1*)myobj)->GetSumOfWeights());"); }
