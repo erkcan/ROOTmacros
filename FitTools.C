@@ -1,3 +1,5 @@
+// A list of fitting related tools...
+
 // A function to return the chi2, ndof and chi2 probability
 // for the last fit made to a histogram.  When a histogram is
 // fit, ROOT by default prints out the values of the fitted
@@ -46,4 +48,33 @@ TString PrintLastFit(TH1 *fittedHisto=0)
       out += fitfunc->GetProb(); out += ")";
       break; }
   return out;
+}
+
+
+// A function to fit a histogram in split ranges.  Pass to it the
+// histogram that you would like to be fit, a TArray of the bins over
+// which the fitting is to be done.  For example:
+/* TH1F h("h","test",100,-2,2); h.FillRandom("gaus",10000);
+   for (int i=27;i<38;i++) h.SetBinContent(i,666); h.Fit("gaus");
+   int rng[4]={1,26,38,100}; TArrayI range(4,rng);
+   FitInRange(&h,"gaus","",range); */
+
+Int_t FitInRange(TH1* histo, const char* formula, Option_t* goption = "", TArrayI range) {
+  if (range.GetSize()%2 == 1) {
+    cout << "Error! The range array should have an even number of elements\n";
+    return 0; }
+  TH1* dummy = (TH1*)histo->Clone("dummy");
+  if (range.GetSize()>3)
+    for (int i=1; i<range.GetSize()/2; i++)
+      for (int j=range[i*2-1]+1; j<range[i*2]; j++)
+	dummy->SetBinContent(j,0);
+  int fo = dummy->Fit(formula,"0",goption,dummy->GetBinLowEdge(range[0]),
+		      dummy->GetBinLowEdge(range[range.GetSize()-1]+1));
+  TF1 *ff = dummy->GetListOfFunctions()->Last()->Clone();
+  // We fit the dummy histo without drawing. So now make the func drawable:
+  ff->SetBit(TF1::kNotDraw,0);
+  histo->GetListOfFunctions()->Add(ff);
+  dummy->Delete();
+  histo->Draw(goption);
+  return fo;
 }
