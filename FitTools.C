@@ -62,6 +62,30 @@ TString PrintLastFit(TH1 *fittedHisto=0)
 // try to modify the range.
 
 Int_t FitInRange(TH1* histo, const char* formula, Option_t* goption = "", TArrayI range) {
+  TH1* dummy = SelectBinsFromHisto(histo,range);
+  if (dummy==0) return 0;
+  int fo = dummy->Fit(formula,"0",goption,dummy->GetBinLowEdge(range[0]),
+		      dummy->GetBinLowEdge(range[range.GetSize()-1]+1));
+  CarryFuncFromHisto2Histo(dummy, histo); dummy->Delete();
+  histo->Draw(goption);
+  return fo;
+}
+
+Int_t FitInRange(TH1* histo, TF1 *f1, Option_t* goption = "", TArrayI range) {
+  TH1* dummy = SelectBinsFromHisto(histo,range);
+  if (dummy==0) return 0;
+  int fo = dummy->Fit(f1,"0",goption,dummy->GetBinLowEdge(range[0]),
+		      dummy->GetBinLowEdge(range[range.GetSize()-1]+1));
+  CarryFuncFromHisto2Histo(dummy, histo); dummy->Delete();
+  histo->Draw(goption);
+  return fo;
+}
+
+
+// A function that returns a new histo from a given histo which
+// contains only the selected bins.
+
+TH1* SelectBinsFromHisto(TH1* histo, TArrayI range) {
   if (range.GetSize()%2 == 1) {
     cout << "Error! The range array should have an even number of elements\n";
     return 0; }
@@ -70,13 +94,18 @@ Int_t FitInRange(TH1* histo, const char* formula, Option_t* goption = "", TArray
     for (int i=1; i<range.GetSize()/2; i++)
       for (int j=range[i*2-1]+1; j<range[i*2]; j++)
 	{ dummy->SetBinContent(j,0); dummy->SetBinError(j,0); }
-  int fo = dummy->Fit(formula,"0",goption,dummy->GetBinLowEdge(range[0]),
-		      dummy->GetBinLowEdge(range[range.GetSize()-1]+1));
-  TF1 *ff = dummy->GetListOfFunctions()->Last()->Clone();
-  // We fit the dummy histo without drawing. So now make the func drawable:
+  return dummy;
+}
+
+
+// A function to carry the last fit function from one histogram
+// to another histogram.  Useful if you would like to compare the
+// fits to two similar histograms.
+
+void CarryFuncFromHisto2Histo(TH1 *from, TH1* dest) {
+  TF1 *ff = from->GetListOfFunctions()->Last()->Clone();
+  // The function we got might not be drawable, so make it:
   ff->SetBit(TF1::kNotDraw,0);
-  histo->GetListOfFunctions()->Add(ff);
-  dummy->Delete();
-  histo->Draw(goption);
-  return fo;
+  dest->GetListOfFunctions()->Add(ff);
+  return;
 }
