@@ -58,6 +58,8 @@ TString PrintLastFit(TH1 *fittedHisto=0)
    for (int i=27;i<38;i++) h.SetBinContent(i,666); h.Fit("gaus");
    int rng[4]={1,26,38,100}; TArrayI range(4,rng);
    FitInRange(&h,"gaus","",range); */
+// Note: If you get an abnormal termination of minimization warning,
+// try to modify the range.
 
 Int_t FitInRange(TH1* histo, const char* formula, Option_t* goption = "", TArrayI range) {
   if (range.GetSize()%2 == 1) {
@@ -67,7 +69,7 @@ Int_t FitInRange(TH1* histo, const char* formula, Option_t* goption = "", TArray
   if (range.GetSize()>3)
     for (int i=1; i<range.GetSize()/2; i++)
       for (int j=range[i*2-1]+1; j<range[i*2]; j++)
-	dummy->SetBinContent(j,0);
+	{ dummy->SetBinContent(j,0); dummy->SetBinError(j,0); }
   int fo = dummy->Fit(formula,"0",goption,dummy->GetBinLowEdge(range[0]),
 		      dummy->GetBinLowEdge(range[range.GetSize()-1]+1));
   TF1 *ff = dummy->GetListOfFunctions()->Last()->Clone();
