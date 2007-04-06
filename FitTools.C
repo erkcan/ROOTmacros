@@ -20,18 +20,12 @@ TString PrintLastFit(TH1 *fittedHisto=0)
       TObject *myobj = gROOT->FindObject(padprim->At(i)->GetName());
       // We are looking for histograms on the current pad
       if ( myobj != 0 && myobj->InheritsFrom("TH1") ) {
-	cout << ((TH1*)myobj)->GetListOfFunctions()->GetEntries() << endl;
-	// We only want histograms which have functions assigned to them.
-	// However saved histograms seem to have a TPaveText as the last
-	// "function" associated with them. So we check for TF1 inheritance.
-	if ( ((TH1*)myobj)->GetListOfFunctions()->GetEntries() == 0 ||
-	    !((TH1*)myobj)->GetListOfFunctions()->First()->InheritsFrom("TF1"))
-	  continue;
-	fittedHisto=(TH1*)myobj; break; }
+	TString rcrsv = PrintLastFit((TH1*)myobj);
+	if (rcrsv!="") out=rcrsv;
+      }
     }
-    if (fittedHisto == 0) return out;
+    return out;
   }
-
   if (fittedHisto->GetListOfFunctions()->GetEntries() == 0) return out;
   // We now have a histogram which has some functions associated with it.
   // We will start from the last entry from the list and move back one by
