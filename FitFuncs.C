@@ -19,10 +19,17 @@ TF1* UserFunc(TString function, TString name="user",
     func = new TF1(name, "[0]*[2]/TMath::Pi()/((x-[1])*(x-[1])+[2]*[2])");
     func->SetParNames("A_{sig}","mpv_{sig}","#gamma_{sig}");
     func->SetParameters(1,0,1); }
+  // Xtal Ball
   else if ( function == "cb" || function == "crystal ball" ) {
     func = new TF1(name,XtalBall,xmin,xmax,5);
     func->SetParNames("N","mpv","#sigma","#alpha","n");
     func->SetParameters(1,0,0.5,1,10); }
+  // Double Gaussian with the mpvs the same
+  else if ( function == "doublegaus" ) {
+    func = new TF1(name, "[0]*([1]*TMath::Gaus(x,[2],[3])+(1-[1])*TMath::Gaus(x,[2],[3]*[4]))");
+    func->SetParNames("norm","f_{core}","mpv","#sigma_{core}","#sigma_{wide}/#sigma_{core}");
+    func->SetParLimits(1,0,1);
+    func->SetParameters(1,0.8,0,1,10); }
   func->SetRange(xmin,xmax);
   if (param!=0) func->SetParameters(param);
   return func;
