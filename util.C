@@ -4,6 +4,7 @@ gROOT->LoadMacro("DrawLine.C");
 gROOT->LoadMacro("ErrorPropagation.C");
 gROOT->LoadMacro("FitFuncs.C");
 gROOT->LoadMacro("FitTools.C");
+gROOT->LoadMacro("ManipulateBins.C");
 gROOT->LoadMacro("Ordinals.C");
 gROOT->LoadMacro("OutputToFile.C");
 gROOT->LoadMacro("PlotASCII.C");
