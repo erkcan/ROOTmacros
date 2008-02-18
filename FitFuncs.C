@@ -30,6 +30,11 @@ TF1* UserFunc(TString function, TString name="user",
     func->SetParNames("norm","f_{core}","mpv","#sigma_{core}","#sigma_{wide}/#sigma_{core}");
     func->SetParLimits(1,0,1);
     func->SetParameters(1,0.8,0,1,10); }
+  // 1-Arctan, useful for efficiency turn-on curves etc.
+  else if ( function == "atan" ) {
+    func = new TF1(name, "[0]*(atan([2]*(x-[1]))-[3])");
+    func->SetParNames("norm","x-offset","scale","y-offset");
+    func->SetParameters(1,0,1,0); }
   func->SetRange(xmin,xmax);
   if (param!=0) func->SetParameters(param);
   return func;
