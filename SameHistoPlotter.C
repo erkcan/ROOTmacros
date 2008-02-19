@@ -63,3 +63,9 @@ int SameHistoNormPlotter(TString histoname="",
 			 bool multipad=0, TString opt="") {
   cout << "Normalizing histograms to unit area.\n";
   return SameHistoPlotter(histoname, multipad, opt, "((TH1*)myobj)->Scale(1./((TH1*)myobj)->GetSumOfWeights());"); }
+
+// Another application of the cmdPerObj argument.  Assuming that the object
+// being plotted is a 2D histogram, it draws their x-projections.
+int SameHistoXProjectionPlotter(TString histoname="",
+				bool multipad=0, TString opt="") {
+  return SameHistoPlotter(histoname, multipad, opt, "myobj=new TH1D(* ((TH2*)myobj)->ProjectionX())"); }
