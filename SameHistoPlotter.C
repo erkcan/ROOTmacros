@@ -65,7 +65,7 @@ int SameHistoNormPlotter(TString histoname="",
   return SameHistoPlotter(histoname, multipad, opt, "((TH1*)myobj)->Scale(1./((TH1*)myobj)->GetSumOfWeights());"); }
 
 // Another application of the cmdPerObj argument.  Assuming that the object
-// being plotted is a 2D histogram, it draws their x-projections.
-int SameHistoXProjectionPlotter(TString histoname="",
+// being plotted is a 2D histogram, it draws their x/y-projections.
+int SameHistoProjectionPlotter(TString histoname="", TString proj="X",
 				bool multipad=0, TString opt="") {
-  return SameHistoPlotter(histoname, multipad, opt, "myobj=new TH1D(* ((TH2*)myobj)->ProjectionX())"); }
+  return SameHistoPlotter(histoname, multipad, opt, "myobj=new TH1D(* ((TH2*)myobj)->Projection"+proj+"())"); }
