@@ -1,12 +1,16 @@
 // A ROOT macro that reads in numbers from a given ASCII file,
 // fills them into a TTree and plots them on a histogram.
 
+// It is possible to choose a particular column (or "field" in
+//   awk jargon) of data on each line.
+
 // Just fill the TTree and use ROOT's own TTree->Draw()
-int PlotASCII(TString filename) { return PlotASCII(filename,0,0); }
+int PlotASCII(TString filename, int colno=1) {
+  return PlotASCII(filename,0,0,colno); }
 
 // xmin and xmax are the limits of the histogram to be created.
 // Any value read outside [xmin,xmax] range will become under/overflow.
-int PlotASCII(TString filename, float xmin, float xmax)
+int PlotASCII(TString filename, float xmin, float xmax, int colno=1)
 {
   TTree *mytree = new TTree(filename+"_tree",filename+" ROOT tree");
   float x;
@@ -14,9 +18,14 @@ int PlotASCII(TString filename, float xmin, float xmax)
 
   ifstream asciiFile(filename);
   int sayac = 0;
- 
-  while (asciiFile >> x)
+
+  char dummy[999];
+
+  while ( !asciiFile.eof() )
     {
+      for ( int i=1; i<colno; i++ ) asciiFile >> dummy;
+      if ( ! (asciiFile >> x) ) break;
+      cout << x << endl;
       mytree->Fill();
       sayac++;
     }
