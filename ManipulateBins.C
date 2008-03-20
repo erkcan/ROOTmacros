@@ -76,12 +76,12 @@ TH1D* StepRebin(TH1D *inhisto, int stepPeriod=1)
 }
 
 // Function to remove bins from the beginning or the end of a TH1F
-TH1F* CropBins(TH1F *inhisto, float nbinCropMin=0, int nbinCropMax=0) {
+TH1F* CropBins(TH1F *inhisto, int nbinCropMin=0, int nbinCropMax=0) {
 
   if ( nbinCropMin * nbinCropMax < 0 || nbinCropMin+nbinCropMax==0 )
     return inhisto;
 
-  const int newNbins = inhisto->GetNbinsX() - nbinCropMin - nbinCropMax;
+  int newNbins = inhisto->GetNbinsX() - nbinCropMin - nbinCropMax;
   if ( newNbins < 1 ) return inhisto;
 
   float newXmin = inhisto->GetXaxis()->GetBinLowEdge(nbinCropMin+1);
