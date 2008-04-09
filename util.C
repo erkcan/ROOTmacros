@@ -11,4 +11,5 @@ gROOT->LoadMacro("Ordinals.C");
 gROOT->LoadMacro("OutputToFile.C");
 gROOT->LoadMacro("PlotASCII.C");
 gROOT->LoadMacro("SameHistoPlotter.C");
+gROOT->LoadMacro("TwoVarSample.C");
 }
