@@ -25,7 +25,8 @@ int PlotASCII(TString filename, float xmin, float xmax,
   while ( !asciiFile.eof() )
     {
       for ( int i=1; i<colno; i++ ) asciiFile >> dummy;
-      if ( ! (asciiFile >> x) ) break;
+      if ( ! (asciiFile >> dummy) ) break;
+      x = atof(dummy);
       //cout << x << endl;
       mytree->Fill();
       sayac++;
