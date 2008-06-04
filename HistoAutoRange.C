@@ -6,6 +6,7 @@ void HistoAutoRange() {
 
   if ( gROOT->GetListOfCanvases()->GetEntries() == 0 ) return;
   TList *glist = gPad->GetListOfPrimitives();
+  bool islogy = gPad->GetLogy();
 
   // First identify the current range for the y-axis
   double ymin=0, ymax=0;
@@ -17,15 +18,22 @@ void HistoAutoRange() {
 	break;
     }
   }
+  if ( islogy ) { ymin = 10**ymin; ymax = 10**ymax; }
 
   // Now loop through histos and find the extrema
   for (int i=0; i<glist->GetEntries(); ++i) {
     TObject *obj = glist->At(i);
     if ( obj->InheritsFrom("TH1") ) {
       TH1 *histo = (TH1*)obj;
-      ymin = TMath::Min( ymin, histo->GetMinimum() );
-      ymin = TMath::Min( ymin, histo->GetBinContent(histo->GetMinimumBin()));
-      ymax = TMath::Max( ymax, 1.1 * histo->GetBinContent(histo->GetMaximumBin()));
+
+      // if log scale plot, do not modify the minimum - problems with negatives
+      if ( !islogy ) {
+	ymin = TMath::Min( ymin, histo->GetMinimum() );
+	ymin = TMath::Min( ymin, histo->GetBinContent(histo->GetMinimumBin()));
+      }
+
+      ymax = TMath::Max( ymax, (islogy ? 1.8 : 1.1) 
+			 * histo->GetBinContent(histo->GetMaximumBin()));
     }
   }
 
