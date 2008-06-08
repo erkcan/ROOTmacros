@@ -26,13 +26,16 @@ void HistoAutoRange() {
     if ( obj->InheritsFrom("TH1") ) {
       TH1 *histo = (TH1*)obj;
 
+      // If this is a 2D histogram, sorry, we can't do it (yet).
+      if ( obj->InheritsFrom("TH2") ) return;
+
       // if log scale plot, do not modify the minimum - problems with negatives
       if ( !islogy ) {
 	ymin = TMath::Min( ymin, histo->GetMinimum() );
 	ymin = TMath::Min( ymin, histo->GetBinContent(histo->GetMinimumBin()));
       }
 
-      ymax = TMath::Max( ymax, (islogy ? 1.8 : 1.1) 
+      ymax = TMath::Max( ymax, (islogy ? 1.8 : 1.1)
 			 * histo->GetBinContent(histo->GetMaximumBin()));
     }
   }
