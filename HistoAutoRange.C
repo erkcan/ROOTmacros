@@ -35,8 +35,10 @@ void HistoAutoRange() {
 	ymin = TMath::Min( ymin, histo->GetBinContent(histo->GetMinimumBin()));
       }
 
-      ymax = TMath::Max( ymax, (islogy ? 1.8 : 1.1)
-			 * histo->GetBinContent(histo->GetMaximumBin()));
+      ymax = TMath::Max( ymax, (islogy ? 1.8 : 1.1) *
+			 ( histo->GetBinContent(histo->GetMaximumBin()) +
+			   (int)(histo->GetSumw2N() != 0) *
+			         histo->GetBinError(histo->GetMaximumBin()) ) );
     }
   }
 
