@@ -45,8 +45,10 @@ void HistoAutoRange() {
   // Finally set the new min/max
   for (int i=0; i<glist->GetEntries(); ++i) {
     TObject *obj = glist->At(i);
-    if ( obj->InheritsFrom("TH1") )
+    if ( obj->InheritsFrom("TH1") ) {
       ((TH1*)obj)->GetYaxis()->SetRangeUser(ymin, ymax);
+      ((TH1*)obj)->SetMinimum(); // needed to get gPad->SetLogy() working
+    }
   }
 
   gPad->Modified();
