@@ -13,12 +13,12 @@ TF1* UserFunc(TString function, TString name="user",
     func = new TF1(name, "[0]*TMath::Exp(-1/[1]*(x-[2]))");
     func->SetParNames("c_{bg}", "#tau_{bg}", "offset_{bg}");
     func->SetParameters(1,1,0); }
-  // Breit-Wigner defined by its area, MPV and HWHM
+  // Breit-Wigner defined by its area, MPV and FWHM
   else if ( function == "bw" || function == "breit-wigner" ||
 	    function == "cauchy" || function == "lorentz" ) {
-    func = new TF1(name, "[0]*[2]/TMath::Pi()/((x-[1])*(x-[1])+[2]*[2])");
+    func = new TF1(name, "[0]*[2]/2/TMath::Pi()/((x-[1])*(x-[1])+[2]*[2]/4)");
     func->SetParNames("A_{sig}","mpv_{sig}","#gamma_{sig}");
-    func->SetParameters(1,0,1); }
+    func->SetParameters(1,0,2); }
   // Xtal Ball
   else if ( function == "cb" || function == "crystal ball" ) {
     func = new TF1(name,XtalBall,xmin,xmax,5);
