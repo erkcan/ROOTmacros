@@ -6,6 +6,8 @@ gROOT->LoadMacro("ErrorPropagation.C");
 gROOT->LoadMacro("FitFuncs.C");
 gROOT->LoadMacro("FitTools.C");
 gROOT->LoadMacro("HistoAutoRange.C");
+gROOT->LoadMacro("HistogramOperator.C");
+gROOT->LoadMacro("HistosToMultiPad.C");
 gROOT->LoadMacro("ManipulateBins.C");
 gROOT->LoadMacro("Optimize2D.C");
 gROOT->LoadMacro("Ordinals.C");
