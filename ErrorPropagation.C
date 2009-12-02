@@ -20,6 +20,7 @@ TString BinomialDiv(Double_t dividend, Double_t divisor, Bool_t percent=0)
   // associated binomial division error. Handy for efficiency calculations
   // in physics. The last parameter, which is false by default, can be
   // set true when the answer is desired in percent.
+  if (divisor==0) return "div by zero!";
   Double_t perfac=1.; TString persign="";
   if (percent) { perfac=100.; persign=" %"; }
   TString out=""; out+=(dividend/divisor*perfac); out+=persign+" +- ";
