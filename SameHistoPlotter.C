@@ -40,6 +40,7 @@ int SameHistoPlotter(TString histoname="", bool multipad=0, TString opt="", cons
 	// of being independent of particular TObject type, we set the
 	// default coloring with gStyle and force it.
 	gStyle->SetHistLineColor(noOfPlottedHistos+1);
+	gStyle->SetMarkerColor(noOfPlottedHistos+1);
 	gStyle->SetFuncColor(noOfPlottedHistos+1);
 	if (cmdPerObj) gROOT->ProcessLineFast(cmdPerObj);
 	myobj->UseCurrentStyle();
