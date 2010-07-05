@@ -22,6 +22,7 @@ TF1* UserFunc(TString function, TString name="user",
   // Xtal Ball
   else if ( function == "cb" || function == "crystal ball" ) {
     func = new TF1(name,XtalBall,xmin,xmax,5);
+    //func = new TF1(name,CrystalBall,xmin,xmax,5);
     func->SetParNames("N","mpv","#sigma","#alpha","n");
     func->SetParameters(1,0,0.5,1,10); }
   // Double Gaussian with the mpvs the same
@@ -35,6 +36,11 @@ TF1* UserFunc(TString function, TString name="user",
     func = new TF1(name, "[0]*(atan([2]*(x-[1]))-[3])");
     func->SetParNames("norm","x-offset","scale","y-offset");
     func->SetParameters(1,0,1,0); }
+  // 1-Fermi, useful for efficiency turn-on curves etc.
+  else if ( function == "fermi" ) {
+    func = new TF1(name, "[0]*(1.-1./(1+TMath::Exp((x-[1])/[2])))");
+    func->SetParNames("norm","x-offset","temp");
+    func->SetParameters(1,1,0.5); }
   func->SetRange(xmin,xmax);
   if (param!=0) func->SetParameters(param);
   return func;
