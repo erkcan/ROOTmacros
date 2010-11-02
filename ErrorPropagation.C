@@ -6,6 +6,7 @@ Double_t CalcError(Double_t x, Double_t dx, Double_t z, Double_t dz, char op)
   if (op=='b' || op=='B') {
     Double_t  y  = z - x;
     Double_t dy2 = dz*dz - dx*dx;
+    if ( dy2<0 ) cout << "Warning! dz<dx sounds unphysical!" << endl;
     return ( z ? (sqrt(y*y*dx*dx + x*x*dy2) /z/z) : 0 ); }
   else if (op=='+' || op=='-') return (Double_t)sqrt(dx*dx+dz*dz);
   else if (op=='*') return (Double_t)sqrt(dx*dx*z*z+dz*dz*x*x);
