@@ -15,13 +15,20 @@
 // First implementation: Nov 1-3, 2010, veo.
 
 TH1* VariableSizeRebin(TH1* inhisto, unsigned int nbinsx,
-		       double *xbins, TString axisname="x")
+		       double *xbins, TString axisname="x",
+		       TString newhistoname="newhist")
 {
   if ( nbinsx == 0 ) {
     cout << "Error! nbinsx must be non-zero." << endl; return 0; }
 
+  if ( inhisto == 0 ) {
+    cout << "Error! Input histogram pointer is null." << endl; return 0; }
+
   if ( axisname == "y"  &&  !inhisto->InheritsFrom("TH2") ) {
     cout << "No y-axis defined for " << inhisto->GetName() << endl; return 0; }
+
+  if ( newhistoname == "" ) {
+    cout << "Error! Output histogram name is null."<< endl; return 0; }
 
   double *edgeArr = new double[nbinsx+2]; // an extra bin for safety
 
@@ -76,7 +83,7 @@ TH1* VariableSizeRebin(TH1* inhisto, unsigned int nbinsx,
   TH1 *newhist = 0;
 
   if ( !inhisto->InheritsFrom("TH2") )
-    newhist = inhisto->Rebin(nbins,"newhist",edgeArr);
+    newhist = inhisto->Rebin(nbins,newhistoname.Data(),edgeArr);
 
   else {
 
@@ -90,10 +97,10 @@ TH1* VariableSizeRebin(TH1* inhisto, unsigned int nbinsx,
     if ( axisname == "y" ) {
 
       if ( axisp->IsVariableBinSize() )
-	newhist = new TH2D("newhist", inhisto->GetTitle(),
+	newhist = new TH2D(newhistoname, inhisto->GetTitle(),
 			   nbinsp, edgeArrp, nbins, edgeArr);
       else
-	newhist = new TH2D("newhist", inhisto->GetTitle(),
+	newhist = new TH2D(newhistoname, inhisto->GetTitle(),
 			   nbinsp, edgeArrp[0], edgeArrp[nbinsp+1],
 			   nbins, edgeArr);
 
@@ -104,7 +111,7 @@ TH1* VariableSizeRebin(TH1* inhisto, unsigned int nbinsx,
     }
     else
       // ToDo: Have not yet implemented the above nice stuff for axisname=="x"
-      newhist = new TH2D("newhist", inhisto->GetTitle(),
+      newhist = new TH2D(newhistoname, inhisto->GetTitle(),
 			 nbins, edgeArr, nbinsp, edgeArrp);
 
     newhist->GetYaxis()->SetTitle(inhisto->GetYaxis()->GetTitle());
