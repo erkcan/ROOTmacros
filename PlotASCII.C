@@ -13,9 +13,10 @@ int PlotASCII(TString filename, int colno=1, TString drawOpt="") {
 int PlotASCII(TString filename, float xmin, float xmax,
 	      int colno=1, TString drawOpt="")
 {
-  TTree *mytree = new TTree(filename+"_tree",filename+" ROOT tree");
+  TString treename = filename; treename.ReplaceAll("/","_");
+  TTree *mytree = new TTree(treename+"_tree",treename+" ROOT tree");
   float x;
-  mytree->Branch("input",&x,filename);
+  mytree->Branch("input",&x,treename);
 
   ifstream asciiFile(filename);
   int sayac = 0;
@@ -34,9 +35,9 @@ int PlotASCII(TString filename, float xmin, float xmax,
     }
 
   TH1F *myhisto;
-  if (xmin!=xmax) myhisto = new TH1F(filename+"_histo",filename+"_histo", 100, xmin, xmax);
+  if (xmin!=xmax) myhisto = new TH1F(treename+"_histo",treename+"_histo", 100, xmin, xmax);
   else myhisto = new TH1F();
-  mytree->Draw("input>>"+filename+"_histo","",drawOpt);
+  mytree->Draw("input>>"+treename+"_histo","",drawOpt);
 
   return sayac;
 }
