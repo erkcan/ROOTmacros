@@ -14,6 +14,7 @@ int PlotASCII(TString filename, float xmin, float xmax,
 	      int colno=1, TString drawOpt="")
 {
   TString treename = filename; treename.ReplaceAll("/","_");
+  if ( colno!=1 ) { treename+="_f"; treename+=colno; }
   TTree *mytree = new TTree(treename+"_tree",treename+" ROOT tree");
   float x;
   mytree->Branch("input",&x,treename);
