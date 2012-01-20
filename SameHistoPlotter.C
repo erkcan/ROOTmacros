@@ -1,6 +1,6 @@
 // A ROOT macro to plot the same object (like a histogram) from multiple
 // root files. For example, say you ran a program multiple times with
-// different data samples and created files, each of which contains the 
+// different data samples and created files, each of which contains the
 // histogram "mydir/myhist". Then you can try this:
 // root *.root
 // .x SameHistoPlotter("mydir/myhist")
@@ -18,7 +18,7 @@ int SameHistoPlotter(TString histoname="", bool multipad=0, TString opt="", cons
   // If no canvases around, create a new one.
   if ( gROOT->GetListOfCanvases()->GetEntries() == 0 ) TCanvas::MakeDefCanvas();
   // Note that I use the currently active TPad as my canvas!
-  TPad *mycanv = gPad;
+  TVirtualPad *mycanv = gPad;
   // If multipad option is chosen, we divide the canvas into multiple pads.
   // For simplicity, before we conservatively create one pad for each file that
   // is currently open. (Some pads might therefore remain empty at the end.)
@@ -38,17 +38,25 @@ int SameHistoPlotter(TString histoname="", bool multipad=0, TString opt="", cons
 	   << ", " << histoname << " from ";
       TObject *myobj = myfile->Get(histoname);
       if ( myobj != 0 ) {
-	TString inopt = opt + ((noOfPlottedHistos==0 || multipad) ? "" : "same");
+	TString inopt = opt + ((noOfPlottedHistos==0 || multipad) ? "" : "sames");
 	// To have different colors without sacrificing the flexibility
 	// of being independent of particular TObject type, we set the
 	// default coloring with gStyle and force it.
 	gStyle->SetHistLineColor(noOfPlottedHistos+1);
 	gStyle->SetMarkerColor(noOfPlottedHistos+1);
 	gStyle->SetFuncColor(noOfPlottedHistos+1);
+	//TClass objclass(myobj->ClassName());
+	//if ( 0!=objclass.GetMethodAllAny("GetListOfFunctions") ) {
 	if (cmdPerObj) gROOT->ProcessLineFast(cmdPerObj);
 	myobj->UseCurrentStyle();
 	myobj->Draw(inopt);
 	if (!multipad) myleg->AddEntry(myobj,myfile->GetName(),"lpf");
+	if ( myobj->InheritsFrom("TH1") ) {
+	  gPad->Update();
+	  TList *funclist = ((TH1*)myobj)->GetListOfFunctions();
+	  TPaveStats* stats = funclist->FindObject("stats");
+	  if ( stats ) stats->SetLineColor(noOfPlottedHistos+1);
+	}
 	noOfPlottedHistos ++;
       }
     }
