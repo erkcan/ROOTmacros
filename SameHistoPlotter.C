@@ -24,7 +24,7 @@ int SameHistoPlotter(TString histoname="", bool multipad=0, TString opt="", cons
   // is currently open. (Some pads might therefore remain empty at the end.)
   if ( multipad ) {
     if ( 0 != gROOT->GetListOfGlobalFunctions()->FindObject("DivideCanvas") )
-      DivideCanvas(mycanv, noOfOpenTFiles);
+      DivideCanvas((TPad*)mycanv, noOfOpenTFiles);
     else mycanv->Divide(noOfOpenTFiles); }
   TLegend *myleg = new TLegend(0.5,0.67,0.88,0.88,histoname.Data());
   for (int k=0; k<noOfOpenTFiles; k++) {
