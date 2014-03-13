@@ -12,9 +12,10 @@ void PrintLegend(TLegend *leg=0) {
   }
   TList *ents = leg->GetListOfPrimitives();
   for (int i=0; i<ents->GetEntries(); i++) {
-    TLegendEntry *le = ents->At(i);
+    TLegendEntry *le = (TLegendEntry*)ents->At(i);
     TString s( le->GetLabel() );
     TObject *obj = le->GetObject();
+    if (!obj) continue;  // if no object, this can be the title line, so skip
     TString color = "???";
     if ( obj->InheritsFrom("TH1") )
       color = gROOT->GetListOfColors()->At(((TH1*)obj)->GetLineColor())->GetName();
