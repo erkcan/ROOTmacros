@@ -14,7 +14,10 @@ int AllHistosBrowser(float delay=1.5, TString opt="", TString select="")
       TString inopt = opt;
       if (noOfPlottedHistos==0) {
 	inopt.ToLower(); if (inopt.Index("same")>-1) inopt.ReplaceAll("same",""); }
-      myobj->Draw(inopt.Data());
+      if ( gROOT->GetListOfGlobalFunctions()->FindObject("SameHistoPlotter") )
+	gROOT->ProcessLineFast("SameHistoPlotter(myobj->GetName());");
+      else
+	myobj->Draw(inopt.Data());
       mycanvas->Update();
       cout << myobj->GetName() << endl;
       noOfPlottedHistos++;

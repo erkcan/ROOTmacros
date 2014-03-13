@@ -54,7 +54,7 @@ int SameHistoPlotter(TString histoname="", bool multipad=0, TString opt="", cons
 	if ( myobj->InheritsFrom("TH1") ) {
 	  gPad->Update();
 	  TList *funclist = ((TH1*)myobj)->GetListOfFunctions();
-	  TPaveStats* stats = funclist->FindObject("stats");
+	  TPaveStats* stats = (TPaveStats*)funclist->FindObject("stats");
 	  if ( stats ) stats->SetLineColor(noOfPlottedHistos+1);
 	}
 	noOfPlottedHistos ++;

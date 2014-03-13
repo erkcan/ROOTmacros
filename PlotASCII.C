@@ -4,9 +4,8 @@
 // It is possible to choose a particular column (or "field" in
 //   awk jargon) of data on each line.
 
-// Just fill the TTree and use ROOT's own TTree->Draw()
-int PlotASCII(TString filename, int colno=1, TString drawOpt="") {
-  return PlotASCII(filename,0,0,colno,drawOpt); }
+// There are two versions, one with the user setting the x-range, the
+//   other setting the range automatically by itself.
 
 // xmin and xmax are the limits of the histogram to be created.
 // Any value read outside [xmin,xmax] range will become under/overflow.
@@ -42,3 +41,7 @@ int PlotASCII(TString filename, float xmin, float xmax,
 
   return sayac;
 }
+
+// Just fill the TTree and use ROOT's own TTree->Draw()
+int PlotASCII(TString filename, int colno=1, TString drawOpt="") {
+  return PlotASCII(filename,0,0,colno,drawOpt); }

@@ -1,3 +1,19 @@
+Double_t CrystalBall(Double_t *x, Double_t *par)
+{
+  Double_t xx = x[0];
+  Double_t N = par[0], m = par[1], sig = par[2], alp = par[3], n = par[4];
+  if (sig==0) return 0;
+  if ( xx > m-alp*sig )
+    return N * exp(-(xx-m)*(xx-m)/2/sig/sig);
+  if (alp==0) return 0;
+  if (m/sig-xx/sig+n/alp-alp==0) return 0;
+  return N * exp(-alp*alp/2) * pow(n/alp/(m/sig-xx/sig+n/alp-alp),n);
+}
+
+// reverse CrystalBall : flipped around x=mpv
+Double_t XtalBall(Double_t *x, Double_t *par) {
+  Double_t xprime = 2*par[1]-x[0]; return CrystalBall(&xprime, par); }
+
 // A function which can return a list of possible user defined functions
 TF1* UserFunc(TString function, TString name="user",
 	      double xmin=0, double xmax=1, double *param=0) {
@@ -19,10 +35,14 @@ TF1* UserFunc(TString function, TString name="user",
     func = new TF1(name, "[0]*[2]/2/TMath::Pi()/((x-[1])*(x-[1])+[2]*[2]/4)");
     func->SetParNames("A_{sig}","mpv_{sig}","#gamma_{sig}");
     func->SetParameters(1,0,2); }
-  // Xtal Ball
+  // Reverse Xtal Ball - power tail on the high side
   else if ( function == "cb" || function == "crystal ball" ) {
     func = new TF1(name,XtalBall,xmin,xmax,5);
-    //func = new TF1(name,CrystalBall,xmin,xmax,5);
+    func->SetParNames("N","mpv","#sigma","#alpha","n");
+    func->SetParameters(1,0,0.5,1,10); }
+  // Xtal Ball
+  else if ( function == "xb" || function == "xtal ball" ) {
+    func = new TF1(name,CrystalBall,xmin,xmax,5);
     func->SetParNames("N","mpv","#sigma","#alpha","n");
     func->SetParameters(1,0,0.5,1,10); }
   // Double Gaussian with the mpvs the same
@@ -45,19 +65,3 @@ TF1* UserFunc(TString function, TString name="user",
   if (param!=0) func->SetParameters(param);
   return func;
 }
-
-Double_t CrystalBall(Double_t *x, Double_t *par)
-{
-  Double_t xx = x[0];
-  Double_t N = par[0], m = par[1], sig = par[2], alp = par[3], n = par[4];
-  if (sig==0) return 0;
-  if ( xx > m-alp*sig )
-    return N * exp(-(xx-m)*(xx-m)/2/sig/sig);
-  if (alp==0) return 0;
-  if (m/sig-xx/sig+n/alp-alp==0) return 0;
-  return N * exp(-alp*alp/2) * pow(n/alp/(m/sig-xx/sig+n/alp-alp),n);
-}
-
-// reverse CrystalBall : flipped around x=mpv
-Double_t XtalBall(Double_t *x, Double_t *par) {
-  Double_t xprime = 2*par[1]-x[0]; return CrystalBall(&xprime, par); }

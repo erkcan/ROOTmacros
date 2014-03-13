@@ -18,7 +18,7 @@ TH1F* HistogramOperator(TH1* h1, TH1* h2, const char* cmd) {
    cout << "Different sized histograms - cannot operate" << endl;
    return 0; }
 
- TH1F *out = h1->Clone();
+ TH1F *out =(TH1F*) h1->Clone();
 
  for (int i=0; i<=nbins; ++i) {
    double op1 = h1->GetBinContent(i);

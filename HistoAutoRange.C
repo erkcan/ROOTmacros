@@ -3,6 +3,7 @@
 // with the "same" option and some bin contents are not visible due to
 // the range set automatically by the first plotted histo.
 void HistoAutoRange() {
+#define __HistoAutoRange__
 
   if ( gROOT->GetListOfCanvases()->GetEntries() == 0 ) return;
   TList *glist = gPad->GetListOfPrimitives();
@@ -18,7 +19,7 @@ void HistoAutoRange() {
 	break;
     }
   }
-  if ( islogy ) { ymin = 10**ymin; ymax = 10**ymax; }
+  if ( islogy ) { ymin = pow(10,ymin); ymax = pow(10,ymax); }
 
   // Now loop through histos and find the extrema
   for (int i=0; i<glist->GetEntries(); ++i) {

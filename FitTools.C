@@ -55,7 +55,7 @@ TString PrintLastFit(TH1 *fittedHisto=0)
 // Note: If you get an abnormal termination of minimization warning,
 // try to modify the range.
 
-Int_t FitInRange(TH1* histo, const char* formula, Option_t* goption = "", TArrayI range) {
+Int_t FitInRange(TH1* histo, const char* formula, Option_t* goption, TArrayI range) {
   TH1* dummy = SelectBinsFromHisto(histo,range);
   if (dummy==0) return 0;
   int fo = dummy->Fit(formula,"0",goption,dummy->GetBinLowEdge(range[0]),
@@ -65,7 +65,7 @@ Int_t FitInRange(TH1* histo, const char* formula, Option_t* goption = "", TArray
   return fo;
 }
 
-Int_t FitInRange(TH1* histo, TF1 *f1, Option_t* goption = "", TArrayI range) {
+Int_t FitInRange(TH1* histo, TF1 *f1, Option_t* goption, TArrayI range) {
   TH1* dummy = SelectBinsFromHisto(histo,range);
   if (dummy==0) return 0;
   int fo = dummy->Fit(f1,"0",goption,dummy->GetBinLowEdge(range[0]),
@@ -97,7 +97,7 @@ TH1* SelectBinsFromHisto(TH1* histo, TArrayI range) {
 // fits to two similar histograms.
 
 void CarryFuncFromHisto2Histo(TH1 *from, TH1* dest) {
-  TF1 *ff = from->GetListOfFunctions()->Last()->Clone();
+  TF1 *ff = (TF1*)from->GetListOfFunctions()->Last()->Clone();
   // The function we got might not be drawable, so make it:
   ff->SetBit(TF1::kNotDraw,0);
   dest->GetListOfFunctions()->Add(ff);

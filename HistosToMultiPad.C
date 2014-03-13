@@ -7,7 +7,7 @@ void HistosToMultiPad(TString drawopt="", TCanvas *h2mpCanvas=0) {
   TList *glist = gPad->GetListOfPrimitives();
 
   int nhistos(0);
-  float histomax(0), histomin(0);
+  double histomax(0), histomin(0);
 
   // Now loop through histos and find the extrema
   for (int i=0; i<glist->GetEntries(); ++i) {
