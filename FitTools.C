@@ -45,6 +45,35 @@ TString PrintLastFit(TH1 *fittedHisto=0)
 }
 
 
+// A function to carry the last fit function from one histogram
+// to another histogram.  Useful if you would like to compare the
+// fits to two similar histograms.
+
+void CarryFuncFromHisto2Histo(TH1 *from, TH1* dest) {
+  TF1 *ff = (TF1*)from->GetListOfFunctions()->Last()->Clone();
+  // The function we got might not be drawable, so make it:
+  ff->SetBit(TF1::kNotDraw,0);
+  dest->GetListOfFunctions()->Add(ff);
+  return;
+}
+
+
+// A function that returns a new histo from a given histo which
+// contains only the selected bins.
+
+TH1* SelectBinsFromHisto(TH1* histo, TArrayI range) {
+  if (range.GetSize()%2 == 1) {
+    cout << "Error! The range array should have an even number of elements\n";
+    return 0; }
+  TH1* dummy = (TH1*)histo->Clone("dummy");
+  if (range.GetSize()>3)
+    for (int i=1; i<range.GetSize()/2; i++)
+      for (int j=range[i*2-1]+1; j<range[i*2]; j++)
+	{ dummy->SetBinContent(j,0); dummy->SetBinError(j,0); }
+  return dummy;
+}
+
+
 // A function to fit a histogram in split ranges.  Pass to it the
 // histogram that you would like to be fit, a TArray of the bins over
 // which the fitting is to be done.  For example:
@@ -73,33 +102,4 @@ Int_t FitInRange(TH1* histo, TF1 *f1, Option_t* goption, TArrayI range) {
   CarryFuncFromHisto2Histo(dummy, histo); dummy->Delete();
   histo->Draw(goption);
   return fo;
-}
-
-
-// A function that returns a new histo from a given histo which
-// contains only the selected bins.
-
-TH1* SelectBinsFromHisto(TH1* histo, TArrayI range) {
-  if (range.GetSize()%2 == 1) {
-    cout << "Error! The range array should have an even number of elements\n";
-    return 0; }
-  TH1* dummy = (TH1*)histo->Clone("dummy");
-  if (range.GetSize()>3)
-    for (int i=1; i<range.GetSize()/2; i++)
-      for (int j=range[i*2-1]+1; j<range[i*2]; j++)
-	{ dummy->SetBinContent(j,0); dummy->SetBinError(j,0); }
-  return dummy;
-}
-
-
-// A function to carry the last fit function from one histogram
-// to another histogram.  Useful if you would like to compare the
-// fits to two similar histograms.
-
-void CarryFuncFromHisto2Histo(TH1 *from, TH1* dest) {
-  TF1 *ff = (TF1*)from->GetListOfFunctions()->Last()->Clone();
-  // The function we got might not be drawable, so make it:
-  ff->SetBit(TF1::kNotDraw,0);
-  dest->GetListOfFunctions()->Add(ff);
-  return;
 }
