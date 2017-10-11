@@ -47,9 +47,10 @@ int SameHistoPlotter(TString histoname="", bool multipad=0, TString opt="", cons
 	gStyle->SetFuncColor(noOfPlottedHistos+1);
 	//TClass objclass(myobj->ClassName());
 	//if ( 0!=objclass.GetMethodAllAny("GetListOfFunctions") ) {
-	if (cmdPerObj) gROOT->ProcessLineFast(cmdPerObj);
+	//if (cmdPerObj) gROOT->ProcessLine(cmdPerObj); // need 2 move 4 ROOT6
 	myobj->UseCurrentStyle();
 	myobj->Draw(inopt);
+	if (cmdPerObj) gROOT->ProcessLineSync(cmdPerObj);
 	if (!multipad) myleg->AddEntry(myobj,myfile->GetName(),"lpf");
 	if ( myobj->InheritsFrom("TH1") ) {
 	  gPad->Update();
@@ -74,7 +75,12 @@ int SameHistoPlotter(TString histoname="", bool multipad=0, TString opt="", cons
 int SameHistoNormPlotter(TString histoname="",
 			 bool multipad=0, TString opt="") {
   cout << "Normalizing histograms to unit area.\n";
+#if ROOT_VERSION_CODE > ROOT_VERSION(6,0,0)
+  return SameHistoPlotter(histoname, multipad, opt, "GetLastHisto()->Scale(1./GetLastHisto()->GetSumOfWeights());"); }
+#else
+  // CINT allowed the following, because it didn't care so strictly about scopes
   return SameHistoPlotter(histoname, multipad, opt, "((TH1*)myobj)->Scale(1./((TH1*)myobj)->GetSumOfWeights());"); }
+#endif
 
 // Another application of the cmdPerObj argument.  Assuming that the object
 // being plotted is a 2D histogram, it draws their x/y-projections.
